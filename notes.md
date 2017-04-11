@@ -44,3 +44,14 @@ everything in react is a component
 a component is a reusable piece of your website
 react allows you to build your own tags/components and supply them with information
 in our app, we'll render fish components
+
+for React Dev tools, it'll show your custom tags which are really your components
+anytime you have a piece of an application, it's generally good to build it into its own component
+the "App component" is the parent component 
+-the app component will have a state
+--the state for our app will change what fish are rendered
+we will attach data, attributes, etc. to our components 
+
+=============================
+Creating our First Components
+=============================
