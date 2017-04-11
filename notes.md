@@ -135,3 +135,13 @@ Comments in JSX:
 -have to use curly brackets and /* */
 -you can do regular JS comments outside of the JSX though
 -if you're adding a comment in the JSX, make sure to not put it at the top level because it's treated as a top level element
+
+======================================
+Loading CSS into our React Application
+======================================
+Some people do inline, separate css files for each component, scss/css file
+Nothing wrong with using a link tag
+You can let webpack load your css for you though
+-for this example, we're given a style.css
+-import './css/style.css'; Webpack will load bundle and pop a style tag on the page for us
+Having css stylesheets for each components lets you scope the css to those components only
