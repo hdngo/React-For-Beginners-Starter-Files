@@ -108,3 +108,30 @@ It's best practice to put each of our components in their own files
 -- export default StorePicker;
 - this allows us to import our component 
 -- import StorePicker from './components/StorePicker'; (don't need the .js on the end cause it's assumed)
+
+=====================
+Writing HTML with JSX
+=====================
+JSX allows us to write html inside our javascript
+-it's not required in react but it's just been preferred
+
+example: return React.createElement('p', {className: 'Testing'}, 'I love you');
+--creates a paragraph element with the class 'Testing' and content 'I love you'
+--bad example because nesting gets complicated
+
+for JSX - we have to use className instead of class because class is a reserved keyword in javascript
+-you can only ever return 1 parent element
+-you cannot do something like:
+  <form>
+  </form>
+  <p>
+  </p>
+-you must only ever return 1 parent element, not 2 adjacent ones, one common workaround is throwing an encapsulating div
+-we have to self close our tags
+--i.e. <img/><br/>
+
+Comments in JSX:
+-cannot use // like you do in JavaScript or <!-- -->
+-have to use curly brackets and /* */
+-you can do regular JS comments outside of the JSX though
+-if you're adding a comment in the JSX, make sure to not put it at the top level because it's treated as a top level element
