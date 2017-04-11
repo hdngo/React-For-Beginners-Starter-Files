@@ -201,3 +201,41 @@ Converting the Header component into a stateless functional component:
 -take out the 'this' in 'this.props' since we're being passed in props directly
 --alternatively, var Header = function() {} or function Header() {}
 
+=========================
+Routing with React Router
+=========================
+We're going to use React Router which is the industry standard for routing in React even though it's not included in React
+-using v4
+It allows you to show and hide copmonents anywhere inside the application depending on if you're on a page or not
+
+For our app:
+we're going to create some routes to show the app component if we're on a store page, store picker if we're on a home page, or not found if we're at an invalid url
+
+Import React Router:
+import { BrowserRouter, Match, Miss } from 'react-router';
+Create the router component, and inside of that have Match and Miss
+--similar to Angular when creating the router
+-example:
+const Root = () => {
+  return (
+    <BrowserRouter>
+      <div>
+        <Match exactly pattern="/" component={StorePicker} />
+        <Match pattern="/store/:storeId" component={App} />
+        <Miss component={notFound} />
+      </div>
+    </BrowserRouter>
+  )
+}
+-- the exactly pattern reads as: when you're on '/' show the component, StorePicker
+Now that we have the root component, we swap out the <App/> in our render call which'll indirectly call App or StorePicker
+- render(<Root/>, document.querySelector('#main));
+
+Note: The Match elements can't be a direct child of the BrowserRouter, so we wrap it in a div
+If you're not passing in a string, and you're passing in a variable or boolean, you need to pass it in via curly braces
+
+For our app:
+Create NotFound.js component
+Add import statement in index.js to include the NotFound.js file
+
+
