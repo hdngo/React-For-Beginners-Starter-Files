@@ -154,3 +154,35 @@ We're going to scaffold them out
 Make a new component called app.js
 If you have undefined components, you'll get errors obviously
 Remember to include 'import React from 'react' for all components
+
+===============================
+Passing Dynamic data with props
+===============================
+How do you get data from one component into another?
+-via props
+We have html attributes - i.e. src, alt. - which are ways to pass information to a tag
+For React, you pass information via props
+-we can make up as many attribetus as we want
+
+example:
+<Header tagline="Fresh Seafood Market/" />
+-we made a prop called tagline and passed it "Fresh Seafood Market"
+
+How do we access the attributes? And how do we put variables into jsx?
+-delete the text and open up a set of curly bracelets and use '{this.props.tagline}'
+
+You can use this.props.whatever anywhere within the render method
+-tip: use console.log(this) to see the props object above the return method in the render
+
+$r:
+if you ever need to play with the react dev tools and click on the current component you want and use $r,
+it sets $r to the current component
+-helps for debugging
+-also works in regular javascript
+--use $0 while in react dev tools
+
+Validation:
+We will use prop types to validate that a) data is passed and that b) the data that is passed is the correct type
+-i.e. is the data a string? reject?
+
+
