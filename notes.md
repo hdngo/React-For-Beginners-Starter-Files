@@ -238,4 +238,18 @@ For our app:
 Create NotFound.js component
 Add import statement in index.js to include the NotFound.js file
 
+============================
+Helper and Utility Functions
+============================
+Not exclusive to React
+When we have some functionality that isn't specifically tied to a component, it's useful to create helper functions
+-for our app we'll use helpers.js to store them
+In order to access some of the functions, we want to open up our storepicker and set a default value for when we load the page
+-Rather than saying a value =, where values are tied to states, we want to have a default value equal to getFundName() from our helpers.js
+--
+named export in es6 example-- export function getFundName()
+
+in our StorePicker.js, we set the defaultValue={getFunName()}
+-we pass it in via {} so we can run JS
+-we import the getFundName function at the top via: import { getFunName } from '../helpers';
 
