@@ -55,3 +55,56 @@ we will attach data, attributes, etc. to our components
 =============================
 Creating our First Components
 =============================
+First going to create a store picker component
+-Allows to type the name of a store or autofill
+-Button that'll take you to the store when clicked
+-We'll first write the code in index.js and then move it into a separate components folder
+-First need to load react
+-Rather than use a script tag, we're going to use es6 modules
+
+Importing React:
+-import React from 'react';
+-this loads the React variable from the library, 'react'
+-'react' comes from our package.json (in dependencies)
+--if it wasn't in our package.json, we'd have to install react via 'npm install react --save'
+
+ESLint:
+-the create-react-app comes with minimal eslint rules that'll throw us warnings in the console 
+
+after importing react:
+we see that in our dom elements we're given a static bundle.js file
+any code that's written into index.js is bundled into our bundle.js file
+
+Create our First Component:
+use ES6 classes
+-we use a capital on all of our classes because they're reusable
+-our component classes must extend from the React.Component
+-all components must have the render method
+-when a component gets rendered to the actual page, it asks the class what html should it display and we specify in our render function using jsx
+
+
+class StorePicker extends React.Component {
+  render() {
+    return <p>Hello</p>
+  }
+}
+
+In the HTML:
+we have an empty div -- <div id="main">
+this is where our react app will go and it's our "mounting point"
+we need to grab the react dom
+-where react renders out to is not just html, but in our case we want it to render html so we need to import the render method from a package called react-dom
+-- import { render } from 'react-dom';
+-- rather than import the entire react-dom package, we use the curly braces so that we only grab the method we need
+
+Render the storepicker component:
+render(<StorePicker/>, document.querySelector('#main'));
+-this is JSX because we specify the component and give it the target location for where it'll be rendered
+
+It's best practice to put each of our components in their own files
+-for each component file we need to import React
+-- import React from 'react';
+-also export the component
+-- export default StorePicker;
+- this allows us to import our component 
+-- import StorePicker from './components/StorePicker'; (don't need the .js on the end cause it's assumed)
