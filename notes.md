@@ -185,4 +185,19 @@ Validation:
 We will use prop types to validate that a) data is passed and that b) the data that is passed is the correct type
 -i.e. is the data a string? reject?
 
+===============================
+Stateless Functional Components
+===============================
+So far we've been making basic React components
+But rather than just having a render method, we can have other methods and lifecycle hooks
+Sometimes components are simple and only do one thing like rendering html to the dom, in which case we don't need a full react component
+-instead we can make a STATELESS functional component to render out the jsx
+In our case, the header isn't going to change, all it does is creates the header with other elements inside of them
+
+Converting the Header component into a stateless functional component:
+-delete the closing brace }
+-take out the class declaration and entire render() so we're left with what's returned
+-store what's returned into a variable: const Header = (props) => { //return code here } 
+-take out the 'this' in 'this.props' since we're being passed in props directly
+--alternatively, var Header = function() {} or function Header() {}
 
