@@ -253,3 +253,66 @@ in our StorePicker.js, we set the defaultValue={getFunName()}
 -we pass it in via {} so we can run JS
 -we import the getFundName function at the top via: import { getFunName } from '../helpers';
 
+=========================
+Working with React Events
+=========================
+Events in React are the same as in regular JavaScript
+Similar to jQuery
+Differences is that the events are wrapped in this wrapped called SyntheticEvent that does some things under the hood to work across the browser
+Events are done INLINE
+In React there aren't too many separations of concerns, we'll have some inline onclicks and such on things (our form for example)
+
+For our app: grab form input grab what's entered and listen to the form submit
+
+Working on StorePicker:
+-add onSubmit listener to form element
+--<form className="store-selector" onSubmit={this.goToStore}/>
+--render methods are bound to the class that you're in, all the other methods (i.e. goToStore) are not bound to the component so we need to figure that out later
+--so 'this' refers to the class instance
+-add goToStore function above render
+--note, we do not need a comma after the function before render(), es6 classes do not have commas
+-add event.preventDefault() to prevent page redirect
+
+In React, you want to try to stay away from touching the dom as much as possible, because we just want to change the data and let React handle that part, so we're going to use refs
+-previously in react you'd use something like ref="storeInput" but we're going to be phasing out stringRefs and using functionRefs
+
+Our example:         
+<input type="text" required placeholder="Store Name" defaultValue ={getFunName()} ref={(input) => { this.storeInput = input }} />
+After adding the above, we tried doing a console.log(this) in our StorePicker class, but 'this' was set to null, why?
+-because it's not bound to the instance
+
+aside: Old React would have something like:
+React.createClass({
+  goToStore() {
+    console.log(this);
+  },
+  render() {
+
+  }
+})
+
+when React changed to es6 classes, it doesn't implicitly bind all the methods on our component to the component itself, so there are a few ways we have to go and change that
+-we can use the constructor of the component (the bunch of code that runs when the component is created)
+--in the constructor we would run super() which would allow us to run the React.Component function first and then allows us to sprinkle on other stuff we've added afterwards
+
+example:
+class StorePicker extends React.Component {
+  constructor() {
+    super();
+    this.goToStore = this.goToStore.bind(this);
+    //this looks for the goToStore method and sets itself to its own self, and binds it to this
+    //and here, this references the StorePicker component
+  }
+}
+
+The above method is complicated/tedious, so we're not going to use it and comment it out
+
+Better Method:
+Go to onSubmit and do {this.goToStore.bind(this)}
+-binds the goToStore method to this (the component)
+
+Alternatively:
+{(e) => this.goToStore(e)}
+-downside to using this is that if there are several storepickers on a page, we'd be creating an individual function for every component that's rendered whereas to the other way, we use a single goToStore 
+
+Next video we figure out how to change the urls
