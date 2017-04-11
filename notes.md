@@ -316,3 +316,39 @@ Alternatively:
 -downside to using this is that if there are several storepickers on a page, we'd be creating an individual function for every component that's rendered whereas to the other way, we use a single goToStore 
 
 Next video we figure out how to change the urls
+
+======================
+All About React Router
+======================
+With React Router 4 there are 2 main ways to change the page
+Everything that you want to do is done via a component
+What we could do is render our a redirect component (import via react router) and say something like:
+-if store is set, redirect
+Otherwise use an imperative api which makes more sense in our case where we're pulling out the value for stores
+
+Imperative API:
+uses .transitionTo();
+
+Implementing:
+First we need access to the router
+Our router is in our index.js, and since the BrowserRouter is essentially the parent of our application we can essentially surface it at any component down through it
+
+We SURFACE the router in our component to make it available using contextTypes
+99% of the time we're using state to pass data from a parent to child component
+Sometimes or use props
+-React doesn't want us to make things available globally, so rather than relying on a global state, we will eventually use states
+-Routers are among the exceptions for things that can be made globally available
+-We surface our router using context
+
+StorePicker.contextTypes = {
+  router: React.PropTypes.object
+}
+- this line says that StorePicker expects something called a router and React will make it available
+- creates a context object for the StorePicker
+
+Then we add:
+-this.context.router.transitionTo(`/store/${storeId}`); to our goToStore function where storeId is set to this.storeInput.value
+
+Since React is all client side it uses HTML5 push state
+-the page doesn't actually reload itself, out url changes but there's no browser refresh hence why it's fast because the html/css/js is already loaded on the page
+
