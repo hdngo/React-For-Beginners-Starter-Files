@@ -145,3 +145,12 @@ You can let webpack load your css for you though
 -for this example, we're given a style.css
 -import './css/style.css'; Webpack will load bundle and pop a style tag on the page for us
 Having css stylesheets for each components lets you scope the css to those components only
+
+===============================================
+Creating our application layout with components
+===============================================
+For our app we have a header component,fish component, order component, inventory component...
+We're going to scaffold them out
+Make a new component called app.js
+If you have undefined components, you'll get errors obviously
+Remember to include 'import React from 'react' for all components
