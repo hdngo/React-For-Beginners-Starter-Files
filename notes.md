@@ -352,3 +352,59 @@ Then we add:
 Since React is all client side it uses HTML5 push state
 -the page doesn't actually reload itself, out url changes but there's no browser refresh hence why it's fast because the html/css/js is already loaded on the page
 
+===================
+Understanding State
+===================
+State is a fundamental core concept in React
+State is a representation of all of the data in our application, each component can have its own state
+Think of state as one object that holds all of the data related to a piece/entire application
+-i.e. state related to a listing of all of the fish, another state for the order
+-with jquery, imagine saving data in attributes or in the dom, but in React, we store data in the 'master object' known as state and let React handle it for you
+--in React, you edit the data, and React handles the html for you
+
+Creating the add fish form:
+Make an AddFishForm component
+When someone clicks add item, we want to create an object 
+Create a createFish method
+How do we grab the text out of the inputs and put them into our object?
+-we used refs before
+--example: <input ref={(input) => this.name = input} type="text" placeholder="Fish Name" />
+--creates an attribuet named 'name' for our AddFishForm component and sets the value equal to the input value
+--allows us to use this.name.value, this.price.value, etc.
+
+Your state is always tied to a specific component but sometimes they're tied to your app component
+When you need to share state between components, you want to put the state on the app component (parent) so that you can pass it on down to other components
+
+So how do you use state on a React component?
+React needs to know what to expect, what it'll do, what kind of state, etc.
+We use a constructor method again for our component and super()
+class App extends React.Component {
+    constructor() {
+      super();
+      // similar to getInitialState
+      this.state = {
+        fishes: {'hi'},
+        order: {}
+      }
+    };
+  }
+...
+
+When you want to update state, there are a couple of things that you need to do
+-you can update your state by doing something like this.state.fishes.fish1 = fish
+BUT
+-it's better to take a copy of your current state and then update your actual state
+-the reason is because its better for perforamnce and you don't want to accidently update a state and have a race condition
+COPY the state:
+-const fishes = {...this.state.fishes};
+--this.state.fishes is our existing state, and we're spreading it via es6, taking every item from our object and spread it into our fishes object (makes a copy basically)
+ADD the new fish
+Going to be using a time stamp to add to our fish to maintain order and be using it as the key to our fish
+We have to explicitly tell React which state to update
+-we don't pass in the entire state
+-we pass in what specifically changed via: this.setState({ fishes: fishes });
+We also need to bind the addFish method to the app component itself in our constructor function
+- this.addFish = this.addFish.bind(this);
+
+We also need to pass in the addFish method via props through Inventory and AddFishForm components
+
