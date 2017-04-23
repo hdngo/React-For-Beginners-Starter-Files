@@ -472,3 +472,14 @@ we take a copy of our state using a spread:
 - const order = {...this.state.order};
 
 Pass the addToOrder function to the Fish component via props
+After we add the function to our Fish component (below)
+  <button onClick={this.props.addToOrder} ..
+we need to figure how to pass the argument, but we can't do:
+  <button onClick={this.props.addToOrder(fish)} .. 
+because that would run on pageload
+So to make it happen when a user clicks the button, we use an inline arrow function where we can pass the fish as an argument liek so:
+  <button onClick={() =>this.props.addToOrder(key)}
+BUT we need to access the key, so we need to explicitly pass the key down, but we shouldn't ever touch the key, so if we ever need a key, we need to make one up (i.e. make an attribute and pass it)
+  (In the app component): <Fish key={key} index={key} ..
+
+  
