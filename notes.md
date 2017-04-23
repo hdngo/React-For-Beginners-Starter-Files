@@ -482,4 +482,16 @@ So to make it happen when a user clicks the button, we use an inline arrow funct
 BUT we need to access the key, so we need to explicitly pass the key down, but we shouldn't ever touch the key, so if we ever need a key, we need to make one up (i.e. make an attribute and pass it)
   (In the app component): <Fish key={key} index={key} ..
 
-  
+===============================
+Displaying Order State with JSX
+===============================
+We want to display the order in the order div
+Need to give our order component our fishes and the order itself
+- <Order fishes={this.state.fishes} order={this.state.order} (in app.js)
+
+In order to show the different parts of our order, we're going to work with the render function rather than create a different component for each fish
+
+We're going to shell out the work to a separate render function
+(In order.js)
+-we're going to loop over the orderIds use the separate render function (renderOrder) that we'll declare outside of the render function
+-we have to make sure we bind the method to the class using the constructor and super function as well
