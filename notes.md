@@ -408,3 +408,49 @@ We also need to bind the addFish method to the app component itself in our const
 
 We also need to pass in the addFish method via props through Inventory and AddFishForm components
 
+===============================
+Loading data into state onClick
+===============================
+Using a sample-fishes.js for data
+-load sample data into our app inventory
+
+Since we need to have the method happen where our state lives, we need the function to be on our app component (since that's where we declare state)
+
+in order to use the load samples, we need to bind it to the app
+- this.loadSamples = this.loadSamples.bind(this);
+
+pass in the fish data via props to inventory like we did when we passed the addFish method via props
+- <Inventory addFish={this.addFish} loadSamples={this.loadSamples} />
+-this allows us to use this.props.loadSamples for our inventory button
+--<button onClick={this.props.loadSamples}>Load Sample Fishes</button>
+
+=========================
+Displaying State with JSX
+=========================
+Now that we have data being loaded into our state, we need to figure out how to display it in our app
+Within our app, we can make a list and render it in our app within our render() function
+--however, this is bad because we may need to use the fish somewhere else in our application, so we're going to make a Fish component
+1. make fish component
+2. make unordered list in app.js, instead of list item, use the fish component
+-- <ul className="list-of-fishes">
+--  <Fish />
+-- </ul>
+
+JSX has no logic built into it, but if you want to add loops and stuff in it you use curly brackets
+normally in React if you want to loop over things you use .map
+Map is for an array though, and our state is an object so we're going to use Object.keys
+-- 
+{
+  Object
+    .keys(this.state.fishes)
+    .map(key => <Fish />)
+}
+^ The above throws an error because it each child in an array or iterator should have a unique "key" prop
+For example, if we need to update Fish 4, we need react to know to only update Fish 4
+-So, we're going to set a key on the Fish component like so, in addition to passing it the details:
+--<Fish key={key} details={this.state.fishes[key]} />
+
+If you are setting an attribute of a tag, you don't need the quotes if you're going to use {}
+ i.e. <img src={this.props.details.image}.. />
+we can use es6 deconstructuring for our details data grooming
+- const {details} = this.props;
