@@ -454,3 +454,21 @@ If you are setting an attribute of a tag, you don't need the quotes if you're go
  i.e. <img src={this.props.details.image}.. />
 we can use es6 deconstructuring for our details data grooming
 - const {details} = this.props;
+
+====================
+Updating Order State
+====================
+Adding the Add to Order button functionality
+make a variable for isavailable for the fish -boolean value
+button text variable
+-disable button when sold out
+
+Where would we add our Add To Order method?
+-in our app component since we did the same for our loadSamples and addFish
+
+Add to Order:
+using the key to keep track of which fish we're adding
+we take a copy of our state using a spread:
+- const order = {...this.state.order};
+
+Pass the addToOrder function to the Fish component via props
