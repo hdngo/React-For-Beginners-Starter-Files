@@ -617,3 +617,18 @@ We then create an updateFish(key, fish) method on our App and pass it as a prop 
 
 Walkthrough:
 We have an onchange handler which will trigger when someone types into it which'll run the handlechange function which'll take a copy of the fish and we overwrite whatever has changed. We then pass that up to the update fish function which exists in our app component which takes in the key and updated fish object. We take a copy of all of the fishes which we always do when we update our state, we overwrite the one updated fish with our updatedFish object, then we update our step.
+
+=========================
+Removing Items from State
+=========================
+Remember, CRUD - we're going to deal with deleting now
+Go to app.js - create a removeFish method that takes in a key
+-bind the method to the app
+-pass it as a prop to the inventory component 
+-create a button within the inventory.js with an onclick handler that uses the method
+
+Add function to remove the fish from the order:
+Go to app.js and create a removeFromOrder method
+in Order.js
+-add a button in the renderOrder method
+-we can actually store JSX in a variable to use later
