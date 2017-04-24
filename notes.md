@@ -548,3 +548,37 @@ componentWillMount() {
 componentWillUnmount() {
   base.removeBinding(this.ref);
 }
+
+========================================
+Persisting Order State with localstorage
+========================================
+Our state currently syncs to our database but when we add things to our order and we refresh, the data is then lost
+Rather than sync the data to database we're going to sync it to localstorage in the browser and not use cookies
+Going to use more lifecycle methods and hook into them
+First of all we need to hook into when the data actually changes, rather then go into every single piece where we may update the order state we're going to look at the componentWillUpdate method
+--it runs whenever props or state changes
+
+componentWillUpdate:
+Takes in 2 arguments, nextProps and nextState
+if you pass in a curcle bracket object it'll name them (console.log({nextProps, nextState}))
+
+localstorage is tied to your localhost domain, and is a key-value pair
+-we can't store objects in them
+use case:
+-localStorage.setItem('wes', 'is really cool')
+-localStorage.getItem('wes')
+
+We're going to check our localStorage and if there is anything there we'll use that to restore our state
+If something is available at the app level but not the order level, how do we pass down all the params?
+--we figure where we create the Order component in our app and pass this.props.params as a params prop
+<Order
+  fishes={this.state.fishes}
+  order={this.state.order}
+  params={this.props.params}
+/>
+
+for our componentWillUpdate we just want to add in the nextState.order , but that doesn't work because we can't pass in an object, so we need to jsonify it using json.stringify(nextState.order);
+
+Remember though that componentWillMount runs before the app is rendered and we need to know when to update and check localStorage and state
+Also need to make sure we use JSON.parse and JSON.stringify to store in localStorage as a string and handle the object we grab from the storage
+
