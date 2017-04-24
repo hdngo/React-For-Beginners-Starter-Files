@@ -582,3 +582,38 @@ for our componentWillUpdate we just want to add in the nextState.order , but tha
 Remember though that componentWillMount runs before the app is rendered and we need to know when to update and check localStorage and state
 Also need to make sure we use JSON.parse and JSON.stringify to store in localStorage as a string and handle the object we grab from the storage
 
+===============================================
+Bi-directional Data Flow and Live State Editing
+===============================================
+Now we need to build the inventory management system
+For every single item we need to add it to the inventory
+If we add an item in the inventory it should load on the left panel
+For every single thing in our state, we need to render a block to be able to edit them
+-We already have a block to add a new fish which is pushed into our state, but we can't update/edit them yet
+
+Go to Inventory:
+first loop over every single fish that we have using Object.keys
+-make sure to pass in the fishes as a prop to the inventory component in app.js
+-in inventory.js, we're going to map over the fishes and pass it off to a separate render function like we did before  when we rendered orders
+
+the separate render function is basically going to be a "form" with inputs where we'll be able to edit the individual components
+
+We are going to need to databind them so we'll need the data about the fish
+
+We come across an error saying "Failed on form propType: You provided a 'value' prop to a form field without an 'onChange' handler. this will render a read-only field'. if the field is immutable use 'defaultValue'
+--Basically, React doesn't want us sticking state into an input unless we have a plan to update it. If it just needs to be set once then that's 'ok'. If we put state in an inputbox, we need to provide instruction for how it should change state. It wants one core area where our state is coming from (application state), so we need to update our state in this case. 
+-- we need to listen to a change for each of our inputs and anytime they change we update our corresponding state.
+--specify an onchange event listener for each input 
+i.e. onChange({(e) => this.handleChange(e, key)}) and create a handleChange function:
+handleChange(e, key) {
+  const fish = this.props.fishes[key];
+}
+-- this doesn't update the state though when we edit the inputs, so we need to update state by taking a copy of the fish and updating it
+
+How do we know what changed?
+-by using e.target.name, and e.target.value (the reason why we added names to the inputs)
+
+We then create an updateFish(key, fish) method on our App and pass it as a prop to the inventory component and also bind the method to our app component
+
+Walkthrough:
+We have an onchange handler which will trigger when someone types into it which'll run the handlechange function which'll take a copy of the fish and we overwrite whatever has changed. We then pass that up to the update fish function which exists in our app component which takes in the key and updated fish object. We take a copy of all of the fishes which we always do when we update our state, we overwrite the one updated fish with our updatedFish object, then we update our step.
