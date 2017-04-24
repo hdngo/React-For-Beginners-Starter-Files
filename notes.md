@@ -495,3 +495,56 @@ We're going to shell out the work to a separate render function
 (In order.js)
 -we're going to loop over the orderIds use the separate render function (renderOrder) that we'll declare outside of the render function
 -we have to make sure we bind the method to the class using the constructor and super function as well
+
+==================================
+Persisting our State with Firebase
+==================================
+We're going to use firebase as our backend service which uses html5 websockets so we're going to sync the data to it 
+-It allows us to have a backend database and make it realtime so that the database is synced to any users computer
+
+React's state is one big object as is firebase's database
+Sign up for a firebase account and go to the dashboard to get started
+-Create a new project using the new firebase setup and call it catch of the day followed by your name
+-Go to empty database to start rules
+-Go to rules to look at the read and write rules which are currently set to say only authorized users can write so for now we're setting it so that anyone can by setting them to true
+
+Go to the app component:
+-we are going to sync order to localstorage later
+-for fishes, any change that happens to them we need to sync it with firebase using a package called rebase
+
+In order to use rebase, we're going to make it in base.js in the src folder
+Rebase
+-need to import Rebase
+-need an api key
+
+Steps:
+go to the database and grab the config scrips from the overview page
+-need at least the apiKey, authDomain, and databaseURL (for the app we're just copying these)
+-head back over to app.js and import our base
+
+React Life Cycle:
+when a component is being mounted or rendered on to a page, there are different entry points that we can hook into like do an ajax request or check for any number of items or in our case, connect to rebase
+
+we're going to use componentWillMount - allows us to hook into the split second before our app or component is rendered so we can connect our component state with our actual firebase state
+-we're going to use the componentWillMount lifecycle method in our app.js
+--invoked once, it occurs on the client and server immediately before the initial rendering occurs
+--if you wanted to change state before a component gets rendered, this would save us time
+
+componentWillMount - we want to use:
+componentWillMount() {
+  this.ref = base.syncState(`${this.props.params.storeId}/fishes`)
+}
+-- first thing that it takes is a string that points to the actual piece of firebase that we want to sync at
+the top level is the entire database, we dont want to sync the one store or entire thing , instead we want to sync, we want to sync to the specific component instance using props
+-- we also want to pass in an object that has a context and refer to the state we want to sync with:
+componentWillMount() {
+  this.ref = base.syncState(`${this.props.params.storeId}/fishes`
+  , {
+    context: this,
+    state: 'fishes'
+  });
+}
+-- and in the case we sync to another store, we need a componentWillUnmount() call as well:
+componentWillUnmount() {
+  base.removeBinding(this.ref);
+}
