@@ -672,4 +672,22 @@ Secondary animation for animating the numbers (number should go up, another numb
   </CSSTransitionGroup>
   lbs {fish.name} {removeButton}
 </span>
---we need to have a span with a key of count because everytime we have a key of two elements that are besides eachother, they need to have unique keys (we have 2 numbers - the one entering and one leaving, React duplicates it for us) 
+--we need to have a span with a key of count because everytime we have a key of two elements that are besides eachother, they need to have unique keys (we have 2 numbers - the one entering and one leaving, React duplicates it for us)
+
+===================================
+Component Validation with PropTypes
+===================================
+Eventually we want to share components with other people or open source them so we should use proptypes to validate the data that is coming into our components
+Example - our header, we need to make sure our tagline is a string
+
+In Header.js - we want to go below where we declare the component and declare our propTypes
+
+example:
+Header.propType = {
+  tagline: React.PropTypes.string
+}
+-- if we pass something other than a string for our Header tagline, we get error messages in our console
+-- further example: React.PropTypes.string.isRequired 
+-- other example: React.PropTypes.func.isRequired
+
+AddFishForm.propTypes - pass in as a function --> addFish: React.PropTypes.func.isRequired

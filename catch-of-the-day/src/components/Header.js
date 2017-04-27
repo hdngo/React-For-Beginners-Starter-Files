@@ -16,6 +16,9 @@ const Header = (props) => {
   )
 }
     
+Header.propType = {
+  tagline: React.PropTypes.string
+}
 
 
 export default Header;
