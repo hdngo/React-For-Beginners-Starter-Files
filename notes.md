@@ -632,3 +632,44 @@ Go to app.js and create a removeFromOrder method
 in Order.js
 -add a button in the renderOrder method
 -we can actually store JSX in a variable to use later
+
+==========================
+Animating React Components
+==========================
+3 animations for this website
+-fold animation based on checkbox state (fold button)
+
+Going to be editing the css and need to compile it every single time
+We need to run a script for our styles (in our package.json, the styles script and a watch script as well)
+The 3rd package concurrently runs npm start and watch at the same time, if either break it kills them
+Ctrl+C to stop, run 'npm run watch'
+
+Open up animations.styl and Order.js because we want to animate the x to go in and out and style the numbers
+
+Import css transition group component - used to be from react core but its no longer core
+- import CSSTransitionGroup from 'react-addons-css-transition-group'
+
+in Order.js, we're going to turn the <ul> into a CSSTransitionGroup tag, but we want it to be html when it renders so we give it a component prop set to ul, transitionName set to order and set props to specify transition times:
+<CSSTransitionGroup
+  className="order"
+  component="ul"
+  transitionName="order"
+  transitionEnterTimeout={500}
+  transitionLeaveTimeout={500}
+>
+
+If we change the 500 to 5000.. thats 5 seconds
+React gives us some classes that we can hook into with our css
+
+Change transitions in animation.styl
+-we use max height and not height because we can't transition from auto height to a fixed height
+
+Secondary animation for animating the numbers (number should go up, another number comes from underneath)
+-in order.js, put the spans on their own line (the count and fish name):
+<span>
+  <CSSTransitionGroup>
+    <span key={count}>{count}</span>
+  </CSSTransitionGroup>
+  lbs {fish.name} {removeButton}
+</span>
+--we need to have a span with a key of count because everytime we have a key of two elements that are besides eachother, they need to have unique keys (we have 2 numbers - the one entering and one leaving, React duplicates it for us) 
