@@ -408,3 +408,286 @@ We also need to bind the addFish method to the app component itself in our const
 
 We also need to pass in the addFish method via props through Inventory and AddFishForm components
 
+===============================
+Loading data into state onClick
+===============================
+Using a sample-fishes.js for data
+-load sample data into our app inventory
+
+Since we need to have the method happen where our state lives, we need the function to be on our app component (since that's where we declare state)
+
+in order to use the load samples, we need to bind it to the app
+- this.loadSamples = this.loadSamples.bind(this);
+
+pass in the fish data via props to inventory like we did when we passed the addFish method via props
+- <Inventory addFish={this.addFish} loadSamples={this.loadSamples} />
+-this allows us to use this.props.loadSamples for our inventory button
+--<button onClick={this.props.loadSamples}>Load Sample Fishes</button>
+
+=========================
+Displaying State with JSX
+=========================
+Now that we have data being loaded into our state, we need to figure out how to display it in our app
+Within our app, we can make a list and render it in our app within our render() function
+--however, this is bad because we may need to use the fish somewhere else in our application, so we're going to make a Fish component
+1. make fish component
+2. make unordered list in app.js, instead of list item, use the fish component
+-- <ul className="list-of-fishes">
+--  <Fish />
+-- </ul>
+
+JSX has no logic built into it, but if you want to add loops and stuff in it you use curly brackets
+normally in React if you want to loop over things you use .map
+Map is for an array though, and our state is an object so we're going to use Object.keys
+-- 
+{
+  Object
+    .keys(this.state.fishes)
+    .map(key => <Fish />)
+}
+^ The above throws an error because it each child in an array or iterator should have a unique "key" prop
+For example, if we need to update Fish 4, we need react to know to only update Fish 4
+-So, we're going to set a key on the Fish component like so, in addition to passing it the details:
+--<Fish key={key} details={this.state.fishes[key]} />
+
+If you are setting an attribute of a tag, you don't need the quotes if you're going to use {}
+ i.e. <img src={this.props.details.image}.. />
+we can use es6 deconstructuring for our details data grooming
+- const {details} = this.props;
+
+====================
+Updating Order State
+====================
+Adding the Add to Order button functionality
+make a variable for isavailable for the fish -boolean value
+button text variable
+-disable button when sold out
+
+Where would we add our Add To Order method?
+-in our app component since we did the same for our loadSamples and addFish
+
+Add to Order:
+using the key to keep track of which fish we're adding
+we take a copy of our state using a spread:
+- const order = {...this.state.order};
+
+Pass the addToOrder function to the Fish component via props
+After we add the function to our Fish component (below)
+  <button onClick={this.props.addToOrder} ..
+we need to figure how to pass the argument, but we can't do:
+  <button onClick={this.props.addToOrder(fish)} .. 
+because that would run on pageload
+So to make it happen when a user clicks the button, we use an inline arrow function where we can pass the fish as an argument liek so:
+  <button onClick={() =>this.props.addToOrder(key)}
+BUT we need to access the key, so we need to explicitly pass the key down, but we shouldn't ever touch the key, so if we ever need a key, we need to make one up (i.e. make an attribute and pass it)
+  (In the app component): <Fish key={key} index={key} ..
+
+===============================
+Displaying Order State with JSX
+===============================
+We want to display the order in the order div
+Need to give our order component our fishes and the order itself
+- <Order fishes={this.state.fishes} order={this.state.order} (in app.js)
+
+In order to show the different parts of our order, we're going to work with the render function rather than create a different component for each fish
+
+We're going to shell out the work to a separate render function
+(In order.js)
+-we're going to loop over the orderIds use the separate render function (renderOrder) that we'll declare outside of the render function
+-we have to make sure we bind the method to the class using the constructor and super function as well
+
+==================================
+Persisting our State with Firebase
+==================================
+We're going to use firebase as our backend service which uses html5 websockets so we're going to sync the data to it 
+-It allows us to have a backend database and make it realtime so that the database is synced to any users computer
+
+React's state is one big object as is firebase's database
+Sign up for a firebase account and go to the dashboard to get started
+-Create a new project using the new firebase setup and call it catch of the day followed by your name
+-Go to empty database to start rules
+-Go to rules to look at the read and write rules which are currently set to say only authorized users can write so for now we're setting it so that anyone can by setting them to true
+
+Go to the app component:
+-we are going to sync order to localstorage later
+-for fishes, any change that happens to them we need to sync it with firebase using a package called rebase
+
+In order to use rebase, we're going to make it in base.js in the src folder
+Rebase
+-need to import Rebase
+-need an api key
+
+Steps:
+go to the database and grab the config scrips from the overview page
+-need at least the apiKey, authDomain, and databaseURL (for the app we're just copying these)
+-head back over to app.js and import our base
+
+React Life Cycle:
+when a component is being mounted or rendered on to a page, there are different entry points that we can hook into like do an ajax request or check for any number of items or in our case, connect to rebase
+
+we're going to use componentWillMount - allows us to hook into the split second before our app or component is rendered so we can connect our component state with our actual firebase state
+-we're going to use the componentWillMount lifecycle method in our app.js
+--invoked once, it occurs on the client and server immediately before the initial rendering occurs
+--if you wanted to change state before a component gets rendered, this would save us time
+
+componentWillMount - we want to use:
+componentWillMount() {
+  this.ref = base.syncState(`${this.props.params.storeId}/fishes`)
+}
+-- first thing that it takes is a string that points to the actual piece of firebase that we want to sync at
+the top level is the entire database, we dont want to sync the one store or entire thing , instead we want to sync, we want to sync to the specific component instance using props
+-- we also want to pass in an object that has a context and refer to the state we want to sync with:
+componentWillMount() {
+  this.ref = base.syncState(`${this.props.params.storeId}/fishes`
+  , {
+    context: this,
+    state: 'fishes'
+  });
+}
+-- and in the case we sync to another store, we need a componentWillUnmount() call as well:
+componentWillUnmount() {
+  base.removeBinding(this.ref);
+}
+
+========================================
+Persisting Order State with localstorage
+========================================
+Our state currently syncs to our database but when we add things to our order and we refresh, the data is then lost
+Rather than sync the data to database we're going to sync it to localstorage in the browser and not use cookies
+Going to use more lifecycle methods and hook into them
+First of all we need to hook into when the data actually changes, rather then go into every single piece where we may update the order state we're going to look at the componentWillUpdate method
+--it runs whenever props or state changes
+
+componentWillUpdate:
+Takes in 2 arguments, nextProps and nextState
+if you pass in a curcle bracket object it'll name them (console.log({nextProps, nextState}))
+
+localstorage is tied to your localhost domain, and is a key-value pair
+-we can't store objects in them
+use case:
+-localStorage.setItem('wes', 'is really cool')
+-localStorage.getItem('wes')
+
+We're going to check our localStorage and if there is anything there we'll use that to restore our state
+If something is available at the app level but not the order level, how do we pass down all the params?
+--we figure where we create the Order component in our app and pass this.props.params as a params prop
+<Order
+  fishes={this.state.fishes}
+  order={this.state.order}
+  params={this.props.params}
+/>
+
+for our componentWillUpdate we just want to add in the nextState.order , but that doesn't work because we can't pass in an object, so we need to jsonify it using json.stringify(nextState.order);
+
+Remember though that componentWillMount runs before the app is rendered and we need to know when to update and check localStorage and state
+Also need to make sure we use JSON.parse and JSON.stringify to store in localStorage as a string and handle the object we grab from the storage
+
+===============================================
+Bi-directional Data Flow and Live State Editing
+===============================================
+Now we need to build the inventory management system
+For every single item we need to add it to the inventory
+If we add an item in the inventory it should load on the left panel
+For every single thing in our state, we need to render a block to be able to edit them
+-We already have a block to add a new fish which is pushed into our state, but we can't update/edit them yet
+
+Go to Inventory:
+first loop over every single fish that we have using Object.keys
+-make sure to pass in the fishes as a prop to the inventory component in app.js
+-in inventory.js, we're going to map over the fishes and pass it off to a separate render function like we did before  when we rendered orders
+
+the separate render function is basically going to be a "form" with inputs where we'll be able to edit the individual components
+
+We are going to need to databind them so we'll need the data about the fish
+
+We come across an error saying "Failed on form propType: You provided a 'value' prop to a form field without an 'onChange' handler. this will render a read-only field'. if the field is immutable use 'defaultValue'
+--Basically, React doesn't want us sticking state into an input unless we have a plan to update it. If it just needs to be set once then that's 'ok'. If we put state in an inputbox, we need to provide instruction for how it should change state. It wants one core area where our state is coming from (application state), so we need to update our state in this case. 
+-- we need to listen to a change for each of our inputs and anytime they change we update our corresponding state.
+--specify an onchange event listener for each input 
+i.e. onChange({(e) => this.handleChange(e, key)}) and create a handleChange function:
+handleChange(e, key) {
+  const fish = this.props.fishes[key];
+}
+-- this doesn't update the state though when we edit the inputs, so we need to update state by taking a copy of the fish and updating it
+
+How do we know what changed?
+-by using e.target.name, and e.target.value (the reason why we added names to the inputs)
+
+We then create an updateFish(key, fish) method on our App and pass it as a prop to the inventory component and also bind the method to our app component
+
+Walkthrough:
+We have an onchange handler which will trigger when someone types into it which'll run the handlechange function which'll take a copy of the fish and we overwrite whatever has changed. We then pass that up to the update fish function which exists in our app component which takes in the key and updated fish object. We take a copy of all of the fishes which we always do when we update our state, we overwrite the one updated fish with our updatedFish object, then we update our step.
+
+=========================
+Removing Items from State
+=========================
+Remember, CRUD - we're going to deal with deleting now
+Go to app.js - create a removeFish method that takes in a key
+-bind the method to the app
+-pass it as a prop to the inventory component 
+-create a button within the inventory.js with an onclick handler that uses the method
+
+Add function to remove the fish from the order:
+Go to app.js and create a removeFromOrder method
+in Order.js
+-add a button in the renderOrder method
+-we can actually store JSX in a variable to use later
+
+==========================
+Animating React Components
+==========================
+3 animations for this website
+-fold animation based on checkbox state (fold button)
+
+Going to be editing the css and need to compile it every single time
+We need to run a script for our styles (in our package.json, the styles script and a watch script as well)
+The 3rd package concurrently runs npm start and watch at the same time, if either break it kills them
+Ctrl+C to stop, run 'npm run watch'
+
+Open up animations.styl and Order.js because we want to animate the x to go in and out and style the numbers
+
+Import css transition group component - used to be from react core but its no longer core
+- import CSSTransitionGroup from 'react-addons-css-transition-group'
+
+in Order.js, we're going to turn the <ul> into a CSSTransitionGroup tag, but we want it to be html when it renders so we give it a component prop set to ul, transitionName set to order and set props to specify transition times:
+<CSSTransitionGroup
+  className="order"
+  component="ul"
+  transitionName="order"
+  transitionEnterTimeout={500}
+  transitionLeaveTimeout={500}
+>
+
+If we change the 500 to 5000.. thats 5 seconds
+React gives us some classes that we can hook into with our css
+
+Change transitions in animation.styl
+-we use max height and not height because we can't transition from auto height to a fixed height
+
+Secondary animation for animating the numbers (number should go up, another number comes from underneath)
+-in order.js, put the spans on their own line (the count and fish name):
+<span>
+  <CSSTransitionGroup>
+    <span key={count}>{count}</span>
+  </CSSTransitionGroup>
+  lbs {fish.name} {removeButton}
+</span>
+--we need to have a span with a key of count because everytime we have a key of two elements that are besides eachother, they need to have unique keys (we have 2 numbers - the one entering and one leaving, React duplicates it for us)
+
+===================================
+Component Validation with PropTypes
+===================================
+Eventually we want to share components with other people or open source them so we should use proptypes to validate the data that is coming into our components
+Example - our header, we need to make sure our tagline is a string
+
+In Header.js - we want to go below where we declare the component and declare our propTypes
+
+example:
+Header.propType = {
+  tagline: React.PropTypes.string
+}
+-- if we pass something other than a string for our Header tagline, we get error messages in our console
+-- further example: React.PropTypes.string.isRequired 
+-- other example: React.PropTypes.func.isRequired
+
+AddFishForm.propTypes - pass in as a function --> addFish: React.PropTypes.func.isRequired
